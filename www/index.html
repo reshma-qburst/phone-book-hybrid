@@ -52,6 +52,7 @@
                 db.transaction(queryDB, errorDatabase);
             }
  
+            //to list contact
             function queryDB(tx){
                 tx.executeSql('SELECT id, name, nickName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
             }
@@ -90,7 +91,6 @@
                 var emailId = $.trim($("#emailId").val());
                 var website = $.trim($("#website").val());
                 var happyBirthDay = $.trim($("#happyBirthDay").val());
-                console.log(name+' '+nickName+' '+mobilePhoneNumber+' '+workPhoneNumber+' '+emailId+' '+website+' '+happyBirthDay);
  
                 if (name == ''){
                     $("#addNewPage .error").html('Please enter name.').show();
