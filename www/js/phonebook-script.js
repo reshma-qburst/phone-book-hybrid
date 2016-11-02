@@ -154,4 +154,103 @@ $(document).ready(function() {
         $("#addNewPage #happyBirthDay").val('');
         $("#addNewPage #addNewPageHeader").html('');
     }
+
+    /*
+     * Tap to show details view or taphold to show edit/delete options.
+     *
+     */
+    $("#index [data-role='content'] ul").on('tap taphold', 'li', function(event) {
+        event.preventDefault(); //Preventing default call of event
+        event.stopImmediatePropagation(); //Keeps the rest of the handlers from being executed and prevents the event from bubbling up the DOM tree.
+        var liId = this.id;
+        if (event.type === 'taphold') { //To show edit/delete options popup
+            navigator.notification.vibrate(30); //Vibrates the device for the specified amount of time
+            var $popup = $('#actionList-popup');
+            $("#actionList").html('');
+            $("#actionList").append('<li id="edit&' + liId + '">Edit</li>').listview('refresh');
+            $("#actionList").append('<li id="delete&' + liId + '">Delete</li>').listview('refresh');
+            $popup.popup();
+            $popup.popup('open');
+            $("#tapHoldCheck").val('true');
+        } else if (event.type === 'tap') { //To show contact details view
+            if ($("#tapHoldCheck").val() == '') { //Tap will work only if the value of the text box with id 'tapHoldCheck' is blank
+                db.transaction(function(tx) {
+                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay  FROM MyContacts WHERE id=?;", [liId], function(tx, results) {
+                        var row = results.rows.item(0);
+                        $.mobile.showPageLoadingMsg(true);
+                        $.mobile.changePage($("#displayDataPage"), { transition: "slide" });
+                        $("#nameHeader").html(row['name']);
+                        $("#dataName").html(row['name']);
+                        $("#dataNickName").html(row['nickName']);
+                        $("#dataMobilePhoneNumber").html(row['mobilePhoneNumber']);
+                        $("#dataWorkPhoneNumber").html(row['workPhoneNumber']);
+                        $("#dataEmailId").html('<a href="mailto:' + row['emailId'] + '">' + row['emailId'] + '</a>');
+                        $("#dataWebsite").html('<a href="' + row['website'] + '" data-role="external">' + row['website'] + '</a>');
+                        $("#dataHappyBirthDay").html(row['happyBirthDay']);
+                        $('#dataList').trigger('create');
+                        $('#dataList').listview('refresh');
+                        $.mobile.hidePageLoadingMsg();
+                    });
+                });
+            }
+        }
+    });
+
+    /*
+     * Change the hidden field value when the popup is closed.
+     *
+     */
+    $('#actionList-popup').bind({
+        popupafterclose: function(event, ui) {
+            $("#tapHoldCheck").val('');
+        }
+    });
+
+    /*
+     * Edit and Delete functionality.
+     *
+     */
+    $("#index [data-role='popup'] ul").on('click', 'li', function(event) {
+        var action_liId = this.id.split('&');
+        var action = action_liId[0];
+        var id = action_liId[1];
+        if (action == 'edit') { //Edit
+            db.transaction(function(tx) {
+                tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay  FROM MyContacts WHERE id=?;", [id], function(tx, results) {
+                    var row = results.rows.item(0);
+                    $("#name").val(row['name']);
+                    $("#nickName").val(row['nickName']);
+                    $("#mobilePhoneNumber").val(row['mobilePhoneNumber']);
+                    $("#workPhoneNumber").val(row['workPhoneNumber']);
+                    $("#emailId").val(row['emailId']);
+                    $("#website").val(row['website']);
+                    $("#happyBirthDay").val(row['happyBirthDay']);
+                    $("#id").val(id);
+                    $("#addNewPageHeader").html('Edit');
+                    $.mobile.changePage($("#addNewPage"), { transition: "slide", reverse: true });
+                });
+            });
+        }
+        if (action == 'delete') { //Delete
+            navigator.notification.confirm(
+                'Are you sure?',
+                function(buttonIndex) { onConfirm(buttonIndex, id); },
+                'Delete Contact',
+                'Ok, Cancel'
+            );
+        }
+    });
+
+    /*
+     * Call back for delete confirmation from DB.
+     *
+     */
+    function onConfirm(buttonIndex, id) {
+        if (buttonIndex === 1) { //Delete 
+            db.transaction(function(tx) { tx.executeSql("DELETE FROM MyContacts WHERE id=?", [id], queryDB, errorDatabase); });
+        }
+        if (buttonIndex === 2) {
+            $.mobile.changePage($("#index"), { transition: "slide" });
+        }
+    }
 });
