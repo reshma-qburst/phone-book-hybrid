@@ -1,24 +1,61 @@
-# Hello World PhoneGap Template [![bitHound Score][bithound-img]][bithound-url]
+# PhoneGap blank Template [![bitHound Score][bithound-img]][bithound-url]
 
-A PhoneGap Hello World template
+Create a PhoneGap blank template.
 
 ## Usage
 
-#### PhoneGap CLI
+Browser, iOS and android devices.
 
-The hello-world template is the default when you create a new application using the [phonegap-cli][phonegap-cli-url].
+## Features
 
-    phonegap create my-app
+A simple phone book hybrid app to add contacts, view contacts, edit & delete them.
+Search functionality has also been implemented.
 
-Create an app using this template specifically:
+#### PhoneGap CLI for Phone Book App
 
-    phonegap create my-app --template hello-world
+phonegap create phone-book-hybrid
+
+phonegap create phone-book-hybrid --template blank
 
 To see a list of other available PhoneGap templates:
 
     phonegap template list
 
 ## [config.xml][config-xml]
+
+Contains all configurations required for the app.
+
+## [www/index.html][index-html]
+
+Root file of the app. Changes are made in this file and while doing build corresponding files are generated in platform specific folders.
+
+## hooks
+
+Cordova Hooks represent special scripts which could be added by application and plugin developers or even by your own build system  to customise cordova commands.
+
+## platforms
+
+Holds build for different platforms.
+
+## plugins
+
+Holds different Cordova plugins.
+
+## www
+
+Root folder of the project.
+
+## [www/res]
+
+Holds icon and splash screen images for different platforms.
+
+## [www/spec]
+
+For JavaScript unit testing using Jasmine, a BDD (Behaviour Driven Development) testing framework for JavaScript.
+
+## PhoneGap Build
+
+https://github.com/reshma-qburst/phone-book-hybrid
 
 #### android-minSdkVersion (Android only)
 
@@ -38,8 +75,6 @@ It is strongly encouraged that you restrict access to external resources in your
 
 For more information on whitelist configuration, see the [Cordova Whitelist Guide][cordova-whitelist-guide] and the [Cordova Whitelist Plugin documentation][cordova-plugin-whitelist]
 
-## [www/index.html][index-html]
-
 #### Content Security Policy (CSP)
 
 The default CSP is similarly open:
@@ -55,15 +90,3 @@ A good starting point declaration might be:
 For more information on the Content Security Policy, see the [section on CSP in the Cordova Whitelist Plugin documentation][cordova-plugin-whitelist-csp].
 
 Another good resource for generating a good CSP declaration is [CSP is Awesome][csp-is-awesome]
-
-
-[phonegap-cli-url]: http://github.com/phonegap/phonegap-cli
-[cordova-app]: http://github.com/apache/cordova-app-hello-world
-[bithound-img]: https://www.bithound.io/github/phonegap/phonegap-app-hello-world/badges/score.svg
-[bithound-url]: https://www.bithound.io/github/phonegap/phonegap-app-hello-world
-[config-xml]: https://github.com/phonegap/phonegap-template-hello-world/blob/master/config.xml
-[index-html]: https://github.com/phonegap/phonegap-template-hello-world/blob/master/www/index.html
-[cordova-whitelist-guide]: https://cordova.apache.org/docs/en/dev/guide/appdev/whitelist/index.html
-[cordova-plugin-whitelist]: http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-whitelist
-[cordova-plugin-whitelist-csp]: http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-whitelist#content-security-policy
-[csp-is-awesome]: http://cspisawesome.com
