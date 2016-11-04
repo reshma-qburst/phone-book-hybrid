@@ -9,7 +9,6 @@ Browser, iOS and android devices.
 ## Features
 
 A simple phone book hybrid app to add contacts, view contacts, edit & delete them.
-
 Search functionality has also been implemented.
 
 #### PhoneGap CLI for Phone Book App
@@ -22,13 +21,41 @@ To see a list of other available PhoneGap templates:
 
     phonegap template list
 
-## PhoneGap Build
-
-https://github.com/reshma-qburst/phone-book-hybrid
-
 ## [config.xml][config-xml]
 
 Contains all configurations required for the app.
+
+## [www/index.html][index-html]
+
+Root file of the app. Changes are made in this file and while doing build corresponding files are generated in platform specific folders.
+
+## hooks
+
+Cordova Hooks represent special scripts which could be added by application and plugin developers or even by your own build system  to customise cordova commands.
+
+## platforms
+
+Holds build for different platforms.
+
+## plugins
+
+Holds different Cordova plugins.
+
+## www
+
+Root folder of the project.
+
+## [www/res]
+
+Holds icon and splash screen images for different platforms.
+
+## [www/spec]
+
+For JavaScript unit testing using Jasmine, a BDD (Behaviour Driven Development) testing framework for JavaScript.
+
+## PhoneGap Build
+
+https://github.com/reshma-qburst/phone-book-hybrid
 
 #### android-minSdkVersion (Android only)
 
@@ -47,10 +74,6 @@ This template defaults to wide open access.
 It is strongly encouraged that you restrict access to external resources in your application before releasing to production.
 
 For more information on whitelist configuration, see the [Cordova Whitelist Guide][cordova-whitelist-guide] and the [Cordova Whitelist Plugin documentation][cordova-plugin-whitelist]
-
-## [www/index.html][index-html]
-
-Root
 
 #### Content Security Policy (CSP)
 
