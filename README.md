@@ -2,6 +2,10 @@
 
 Create a PhoneGap blank template.
 
+## Usage
+
+Browser, iOS and android devices.
+
 ## Features
 
 A simple phone book hybrid app to add contacts, view contacts, edit & delete them.
@@ -17,6 +21,10 @@ phonegap create phone-book-hybrid --template blank
 To see a list of other available PhoneGap templates:
 
     phonegap template list
+
+## PhoneGap Build
+
+https://github.com/reshma-qburst/phone-book-hybrid
 
 ## [config.xml][config-xml]
 
@@ -41,6 +49,8 @@ It is strongly encouraged that you restrict access to external resources in your
 For more information on whitelist configuration, see the [Cordova Whitelist Guide][cordova-whitelist-guide] and the [Cordova Whitelist Plugin documentation][cordova-plugin-whitelist]
 
 ## [www/index.html][index-html]
+
+Root
 
 #### Content Security Policy (CSP)
 
