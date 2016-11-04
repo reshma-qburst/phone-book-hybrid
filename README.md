@@ -1,20 +1,26 @@
-# Phone Book blank Template [![bitHound Score][bithound-img]][bithound-url]
+# PhoneGap blank Template [![bitHound Score][bithound-img]][bithound-url]
 
-A PhoneGap Phone Book blank template
+Create a PhoneGap blank template.
 
-## Usage
+## Features
+
+A simple phone book hybrid app to add contacts, view contacts, edit & delete them.
+
+Search functionality has also been implemented.
 
 #### PhoneGap CLI for Phone Book App
 
 phonegap create phone-book-hybrid
 
-phonegap create phone-book-hybrid --template hello-world
+phonegap create phone-book-hybrid --template blank
 
 To see a list of other available PhoneGap templates:
 
     phonegap template list
 
 ## [config.xml][config-xml]
+
+Contains all configurations required for the app.
 
 #### android-minSdkVersion (Android only)
 
