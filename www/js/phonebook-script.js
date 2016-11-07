@@ -1,18 +1,93 @@
 $(document).ready(function() {
+
+    var pictureSource; // picture source
+    var destinationType; // sets the format of returned value
+
     document.addEventListener("deviceready", onDeviceReady, false);
     //window.openDatabase("databasename", "<version>", "<display_name>",'<size>');
     var db = window.openDatabase("Database", "1.0", "MyContactsDB", 200000);
 
-    /*
+    /**
      * Check if the device is ready.
      *
      */
     function onDeviceReady() {
         db.transaction(populateDB, errorDatabase, successCB); //Populate the database
+        pictureSource = navigator.camera.PictureSourceType;
+        destinationType = navigator.camera.DestinationType;
         document.addEventListener('backbutton', onBack, false); //Override the back button functionality
+        document.addEventListener('capturePhoto', capturePhoto, false);
+        document.addEventListener('getSavedPhoto', getPhoto, false);
     }
 
-    /*
+    $(".capturePhoto").bind("click", function(event) {
+        capturePhoto();
+    });
+
+    $(".getSavedPhoto").bind("click", function(event) {
+        getPhoto(pictureSource.SAVEDPHOTOALBUM);
+    });
+
+    /**
+     * Called when a photo is successfully retrieved
+     *
+     */
+    function onPhotoDataSuccess(imageData) {
+        // Uncomment to view the base64-encoded image data
+         console.log(imageData);
+        // Get image handle
+        var smallImage = document.getElementById('smallImage');
+        // Unhide image elements
+        smallImage.style.display = 'block';
+        // Show the captured photo
+        // The in-line CSS rules are used to resize the image
+        smallImage.src = "data:image/jpeg;base64," + imageData;
+    }
+
+    /**
+     * Called when a photo is successfully retrieved
+     *
+     */
+    function onPhotoURISuccess(imageURI) {
+        var largeImage = document.getElementById('largeImage');
+        largeImage.style.display = 'block';
+        largeImage.src = imageURI;
+    }
+
+    /**
+     * A button will call this function
+     *
+     */
+    function capturePhoto() {
+        // Take picture using device camera and retrieve image as base64-encoded string
+        navigator.camera.getPicture(onPhotoDataSuccess, onFail, {
+            quality: 50,
+            destinationType: destinationType.DATA_URL
+        });
+    }
+
+    /**
+     * A button will call this function
+     *
+     */
+    function getPhoto(source) {
+        // Retrieve image file location from specified source
+        navigator.camera.getPicture(onPhotoURISuccess, onFail, {
+            quality: 20,
+            destinationType: destinationType.FILE_URI,
+            sourceType: source
+        });
+    }
+
+    /** 
+     * Called if something bad happens.
+     *
+     */
+    function onFail(message) {
+        alert('Failed because: ' + message);
+    }
+
+    /**
      * Callback for overriding back button.
      *
      */
@@ -25,7 +100,7 @@ $(document).ready(function() {
         }
     }
 
-    /*
+    /**
      * Create DB Table.
      *
      */
@@ -33,7 +108,7 @@ $(document).ready(function() {
         //Create the table
         tx.executeSql('CREATE TABLE IF NOT EXISTS MyContacts (id INTEGER PRIMARY KEY AUTOINCREMENT, \
                             name TEXT NOT NULL, nickName TEXT, mobilePhoneNumber INT, \
-                            workPhoneNumber INT, emailId TEXT, website TEXT, happyBirthDay TEXT)\
+                            workPhoneNumber INT, emailId TEXT, website TEXT, happyBirthDay TEXT, smallImage BLOB)\
                              ');
         tx.executeSql('SELECT id, name, nickName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
     }
@@ -42,15 +117,15 @@ $(document).ready(function() {
         db.transaction(queryDB, errorDatabase);
     }
 
-    /*
+    /**
      * Select list data.
      *
      */
     function queryDB(tx) {
-        tx.executeSql('SELECT id, name, nickName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
+        tx.executeSql('SELECT id, name, nickName, smallImage FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
     }
 
-    /*
+    /**
      * Display list.
      *
      */
@@ -68,7 +143,7 @@ $(document).ready(function() {
         $.mobile.changePage($("#index"));
     }
 
-    /*
+    /**
      * To throw error.
      *
      */
@@ -76,7 +151,7 @@ $(document).ready(function() {
 
     $("#addNewPage .error").html('').hide();
 
-    /*
+    /**
      * Display form to add data.
      *
      */
@@ -86,7 +161,7 @@ $(document).ready(function() {
         $("#addNewPageHeader").html("Add New");
     });
 
-    /*
+    /**
      * Save form data.
      *
      */
@@ -98,6 +173,7 @@ $(document).ready(function() {
         var emailId = $.trim($("#emailId").val());
         var website = $.trim($("#website").val());
         var happyBirthDay = $.trim($("#happyBirthDay").val());
+        var image = $.trim($("#smallImage").val());
 
         if (name == '') {
             $("#addNewPage .error").html('Please enter name.').show();
@@ -121,7 +197,7 @@ $(document).ready(function() {
         }
     });
 
-    /*
+    /**
      * Refresh home page.
      *
      */
@@ -130,7 +206,7 @@ $(document).ready(function() {
         db.transaction(queryDB, errorDatabase);
     });
 
-    /*
+    /**
      * Reset form data and redirect back to home.
      *
      */
@@ -139,7 +215,7 @@ $(document).ready(function() {
         db.transaction(queryDB, errorDatabase);
     });
 
-    /*
+    /**
      * Reset form data.
      *
      */
@@ -155,7 +231,7 @@ $(document).ready(function() {
         $("#addNewPage #addNewPageHeader").html('');
     }
 
-    /*
+    /**
      * Tap to show details view or taphold to show edit/delete options.
      *
      */
@@ -175,7 +251,7 @@ $(document).ready(function() {
         } else if (event.type === 'tap') { //To show contact details view
             if ($("#tapHoldCheck").val() == '') { //Tap will work only if the value of the text box with id 'tapHoldCheck' is blank
                 db.transaction(function(tx) {
-                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay  FROM MyContacts WHERE id=?;", [liId], function(tx, results) {
+                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, smallImage FROM MyContacts WHERE id=?;", [liId], function(tx, results) {
                         var row = results.rows.item(0);
                         $.mobile.showPageLoadingMsg(true);
                         $.mobile.changePage($("#displayDataPage"), { transition: "slide" });
@@ -196,7 +272,7 @@ $(document).ready(function() {
         }
     });
 
-    /*
+    /**
      * Change the hidden field value when the popup is closed.
      *
      */
@@ -206,7 +282,7 @@ $(document).ready(function() {
         }
     });
 
-    /*
+    /**
      * Edit and Delete functionality.
      *
      */
@@ -241,7 +317,7 @@ $(document).ready(function() {
         }
     });
 
-    /*
+    /**
      * Call back for delete confirmation from DB.
      *
      */
