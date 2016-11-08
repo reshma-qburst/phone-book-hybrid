@@ -33,14 +33,8 @@ $(document).ready(function() {
      *
      */
     function onPhotoDataSuccess(imageData) {
-        // Uncomment to view the base64-encoded image data
-         console.log(imageData);
-        // Get image handle
         var smallImage = document.getElementById('smallImage');
-        // Unhide image elements
         smallImage.style.display = 'block';
-        // Show the captured photo
-        // The in-line CSS rules are used to resize the image
         smallImage.src = "data:image/jpeg;base64," + imageData;
     }
 
@@ -108,7 +102,7 @@ $(document).ready(function() {
         //Create the table
         tx.executeSql('CREATE TABLE IF NOT EXISTS MyContacts (id INTEGER PRIMARY KEY AUTOINCREMENT, \
                             name TEXT NOT NULL, nickName TEXT, mobilePhoneNumber INT, \
-                            workPhoneNumber INT, emailId TEXT, website TEXT, happyBirthDay TEXT, smallImage BLOB)\
+                            workPhoneNumber INT, emailId TEXT, website TEXT, happyBirthDay TEXT)\
                              ');
         tx.executeSql('SELECT id, name, nickName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
     }
@@ -122,7 +116,7 @@ $(document).ready(function() {
      *
      */
     function queryDB(tx) {
-        tx.executeSql('SELECT id, name, nickName, smallImage FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
+        tx.executeSql('SELECT id, name, nickName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
     }
 
     /**
@@ -173,7 +167,6 @@ $(document).ready(function() {
         var emailId = $.trim($("#emailId").val());
         var website = $.trim($("#website").val());
         var happyBirthDay = $.trim($("#happyBirthDay").val());
-        var image = $.trim($("#smallImage").val());
 
         if (name == '') {
             $("#addNewPage .error").html('Please enter name.').show();
@@ -251,7 +244,7 @@ $(document).ready(function() {
         } else if (event.type === 'tap') { //To show contact details view
             if ($("#tapHoldCheck").val() == '') { //Tap will work only if the value of the text box with id 'tapHoldCheck' is blank
                 db.transaction(function(tx) {
-                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, smallImage FROM MyContacts WHERE id=?;", [liId], function(tx, results) {
+                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay FROM MyContacts WHERE id=?;", [liId], function(tx, results) {
                         var row = results.rows.item(0);
                         $.mobile.showPageLoadingMsg(true);
                         $.mobile.changePage($("#displayDataPage"), { transition: "slide" });
