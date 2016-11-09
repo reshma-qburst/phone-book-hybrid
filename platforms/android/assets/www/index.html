@@ -8,9 +8,11 @@
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
     <title>Phone Book</title>
     <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+    <!--  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" /> -->
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+    <!-- <script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script> -->
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/phonebook-script.js"></script>
 </head>
@@ -18,29 +20,28 @@
 <body>
     <!-- main page starts -->
     <div data-role="page" id="index">
-        <div data-role="header" data-position="fixed">
-            <a href="#" class="refresh" data-role="button" data-icon="refresh" data-theme="a" title="Refresh">Refresh</a>
+        <div data-role="header" data-position="fixed" data-theme="b">
+            <a href="#" class="refresh" data-role="button" data-icon="refresh" data-theme="b" title="Refresh">Refresh</a>
             <h1>Phone Book</h1>
-            <a href="#" class="addNew" data-role="button" data-icon="add" data-theme="a" title="Add New">Add</a>
+            <a href="#" class="addNew" data-role="button" data-icon="plus" data-theme="b" title="Add New">Add</a>
         </div>
         <div data-role="tabs" id="tabs">
             <div data-role="navbar">
                 <ul>
-                    <li><a href="#one" class="navItemClick ui-btn-active ui-state-persist" data-ajax="false">Contacts</a></li>
-                    <li><a class="navItemClick" href="#two" data-ajax="false">Groups</a></li>
+                    <li><a href="#one" class="ui-btn-active ui-state-persist" data-ajax="false">Contacts</a></li>
+                    <li><a href="#two" data-ajax="false">Groups</a></li>
                 </ul>
             </div>
-        </div>
-        <div id="one" data-role="content" class="ui-content">
-            <ul data-role="listview" data-filter="true" data-filter-placeholder="Search..." id="userList"> </ul>
-        </div>
-        <div id="two" data-role="content">
-            <!-- <ul data-role="listview" data-filter="true" data-filter-placeholder="Search Group..." id="groupList"> </ul> -->
-            <ul data-role="listview">
-                <li>VIP</li>
-                <li>Friends</li>
-                <li>Family</li>
-            </ul>
+            <div id="one" data-role="content" class="ui-content">
+                <ul data-role="listview" data-filter="true" data-filter-placeholder="Search..." id="userList"> </ul>
+            </div>
+            <div id="two" data-role="group-content">
+                <ul data-role="listview" data-filter="true" data-filter-placeholder="Search Group..." id="groupList" data-inset="true">
+                    <li id="0"><a href="#">VIP</a></li>
+                    <li id="1"><a href="#">Friends</a></li>
+                    <li id="2"><a href="#">Family</a></li>
+                </ul>
+            </div>
         </div>
         <div data-role="popup" id="actionList-popup" data-overlay-theme="a">
             <ul data-role="listview" id="actionList" style="border: 1px solid blue; width:15em"> </ul>
@@ -50,10 +51,10 @@
     <!-- main page ends -->
     <!-- display data page starts -->
     <div data-role="page" id="displayDataPage">
-        <div data-role="header" data-position="fixed">
-            <a href="#" class="back" data-role="button" data-icon="arrow-l" data-theme="a" title="Back">Back</a>
+        <div data-role="header" data-position="fixed" data-theme="b">
+            <a href="#" class="back" data-role="button" data-icon="arrow-l" data-theme="b" title="Back">Back</a>
             <h1 id="nameHeader"></h1>
-            <a href="#" class="addNew" data-role="button" data-icon="add" data-theme="a" title="Add New">Add</a>
+            <a href="#" class="addNew" data-role="button" data-icon="plus" data-theme="b" title="Add New">Add</a>
         </div>
         <div data-role="content">
             <ul data-role="listview" id="dataList">
@@ -64,16 +65,49 @@
                 <li>Email Id : <span id="dataEmailId"></span></li>
                 <li>Website : <span id="dataWebsite"></span></li>
                 <li>Happy Birth Day : <span id="dataHappyBirthDay"></span></li>
+                <li>Group : <span id="dataContactGroup"></span></li>
             </ul>
         </div>
     </div>
     <!-- display data page ends -->
+    <!-- add contact group data page starts -->
+    <div data-role="page" id="addContactGroupPage">
+        <div data-role="header" data-position="fixed" data-theme="b">
+            <a href="#" class="back" data-role="button" data-icon="arrow-l" data-theme="b" title="Back">Back</a>
+            <h1 id="nameHeader"></h1>
+        </div>
+        <div data-role="content">
+            <form>
+                <div class="ui-field-contain">
+                    <label for="groupContactData">Select Group: </label>
+                    <select name="groupContactData" id="groupContactData">
+                        <option value="">Select</option>
+                        <option value="0">VIP</option>
+                        <option value="1">Family</option>
+                        <option value="2">Friends</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- add contact group data page ends -->
+    <!-- contact group list starts-->
+    <div data-role="page" id="contactGroupListPage">
+        <div data-role="header" data-position="fixed" data-theme="b">
+            <a href="#" class="back" data-role="button" data-icon="arrow-l" data-theme="b" title="Back">Back</a>
+            <h1 id="nameHeader"></h1>
+        </div>
+        <div data-role="content">
+            <ul data-role="listview" data-filter="true" data-filter-placeholder="Search..." id="groupDataList"> </ul>
+        </div>
+    </div>
+    <!-- contact group list ends-->
     <!-- add contact form starts -->
     <div data-role="page" id="addNewPage">
-        <div data-role="header" data-position="fixed">
-            <a href="#" class="back" data-role="button" data-icon="arrow-l" data-theme="a" title="Back">Back</a>
+        <div data-role="header" data-position="fixed" data-theme="b">
+            <a href="#" class="back" data-role="button" data-icon="arrow-l" data-theme="b" title="Back">Back</a>
             <h1 id="addNewPageHeader"></h1>
-            <a href="#" id="save" data-role="button" data-icon="check" data-theme="a" title="Save">Save</a>
+            <a href="#" id="save" data-role="button" data-icon="check" data-theme="b" title="Save">Save</a>
         </div>
         <div data-role="content">
             <div class='error'></div>
@@ -104,6 +138,15 @@
             <div data-role="fieldcontain">
                 <label for="happyBirthDay">Happy Birth Day</label>
                 <input type="date" name="happyBirthDay" id="happyBirthDay" value="" />
+            </div>
+            <div class="ui-field-contain">
+                <label for="groupContactData">Select Group: </label>
+                <select name="groupContactData" id="groupContactData">
+                    <option value="">Select</option>
+                    <option value="0">VIP</option>
+                    <option value="1">Family</option>
+                    <option value="2">Friends</option>
+                </select>
             </div>
             <div data-role="fieldcontain">
                 <img style="display:none;width:70px;height:70px;" id="smallImage" src="" />

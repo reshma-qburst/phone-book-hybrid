@@ -18,7 +18,6 @@ $(document).ready(function() {
         document.addEventListener('backbutton', onBack, false); //Override the back button functionality
         document.addEventListener('capturePhoto', capturePhoto, false);
         document.addEventListener('getSavedPhoto', getPhoto, false);
-        document.addEventListener('navItemClick', navItemClick, false);
     }
 
     $(".capturePhoto").bind("click", function(event) {
@@ -27,10 +26,6 @@ $(document).ready(function() {
 
     $(".getSavedPhoto").bind("click", function(event) {
         getPhoto(pictureSource.SAVEDPHOTOALBUM);
-    });
-
-    $(".navItemClick").bind("click", function(event) {
-        navItemClick(this);
     });
 
     /**
@@ -107,14 +102,9 @@ $(document).ready(function() {
         //Create the table
         tx.executeSql('CREATE TABLE IF NOT EXISTS MyContacts (id INTEGER PRIMARY KEY AUTOINCREMENT, \
                             name TEXT NOT NULL, nickName TEXT, mobilePhoneNumber INT, \
-                            workPhoneNumber INT, emailId TEXT, website TEXT, happyBirthDay TEXT)\
+                            workPhoneNumber INT, emailId TEXT, website TEXT, happyBirthDay TEXT, groupId INTEGER, groupName TEXT)\
                              ');
-        tx.executeSql('SELECT id, name, nickName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
-
-        /*tx.executeSql('CREATE TABLE IF NOT EXISTS MyContactGroups (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-                            name TEXT NOT NULL)\
-                             ');
-        tx.executeSql('SELECT id, name FROM MyContactGroups ORDER BY name', [], queryGroupSuccess, errorDatabase);*/
+        tx.executeSql('SELECT id, name, nickName, groupName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
     }
 
     function successCB() {
@@ -126,7 +116,7 @@ $(document).ready(function() {
      *
      */
     function queryDB(tx) {
-        tx.executeSql('SELECT id, name, nickName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
+        tx.executeSql('SELECT id, name, nickName, groupName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
     }
 
     /**
@@ -134,7 +124,7 @@ $(document).ready(function() {
      *
      */
     function querySuccess(tx, results) {
-        $.mobile.showPageLoadingMsg(true);
+        $.mobile.loading("show");
         var len = results.rows.length;
         $("#userList").html('');
         for (var i = 0; i < len; i++) {
@@ -143,22 +133,15 @@ $(document).ready(function() {
             $("#userList").append(htmlData);
             $("#userList").listview().listview('refresh');
         }
-        $.mobile.hidePageLoadingMsg();
-        $.mobile.changePage($("#index"));
+        $.mobile.loading("hide");
+        $("body").pagecontainer("change", "#index");
     }
 
-    function queryGroupSuccess(tx, results){
-        $.mobile.showPageLoadingMsg(true);
-        var len = results.rows.length;
-        $("#groupList").html(''); 
-        for (var i = 0; i < len; i++) {
-            var row = results.rows.item(i);
-            var htmlData = '<li id="' + row["id"] + '"><a href="#"><h2>' + row["name"] + '</h2></a></li>';
-            $("#groupList").append(htmlData);
-            $("#groupList").listview().listview('refresh');
-        }
-        $.mobile.hidePageLoadingMsg();
-        $.mobile.changePage($("#index"));
+    function queryGroupSuccess(tx, results, groupid, groupname, id) {
+        var row = results.rows.item(0);
+        tx.executeSql("UPDATE MyContacts SET name=?, nickName=?, mobilePhoneNumber=?, workPhoneNumber=?, emailId=?, website=?, happyBirthDay=?, groupId=?, groupName=? WHERE id=? ", [row['name'], row['nickName'], row['mobilePhoneNumber'], row['workPhoneNumber'], row['emailId'], row['website'], row['happyBirthDay'], groupid, groupname, id],
+            queryDB, errorDatabase);
+        db.transaction(queryDB, errorDatabase);
     }
 
     /**
@@ -175,7 +158,7 @@ $(document).ready(function() {
      */
     $(".addNew").bind("click", function(event) {
         $("#addNewPage .error").html('').hide();
-        $.mobile.changePage($("#addNewPage"), { transition: "slide", reverse: true });
+        $("body").pagecontainer("change", "#addNewPage", { transition: "slide", reverse: true });
         $("#addNewPageHeader").html("Add New");
     });
 
@@ -191,6 +174,15 @@ $(document).ready(function() {
         var emailId = $.trim($("#emailId").val());
         var website = $.trim($("#website").val());
         var happyBirthDay = $.trim($("#happyBirthDay").val());
+        var groupName = $.trim($("#groupName").val());
+        var groupId;
+        if (groupName == 'VIP') {
+            groupId = 0;
+        } else if (groupName == 'Family') {
+            groupId = 1;
+        } else {
+            groupId = 2;
+        }
 
         if (name == '') {
             $("#addNewPage .error").html('Please enter name.').show();
@@ -201,12 +193,12 @@ $(document).ready(function() {
             $("#id").val('');
             if (id == '') { //Save
                 db.transaction(function(tx) {
-                    tx.executeSql("INSERT INTO MyContacts (name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay) VALUES  (?, ?, ?, ?, ?, ?, ?)", [name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay],
+                    tx.executeSql("INSERT INTO MyContacts (name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupId, groupName) VALUES  (?, ?, ?, ?, ?, ?, ?, ? ,?)", [name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupId, groupName],
                         queryDB, errorDatabase);
                 });
             } else { //Update
                 db.transaction(function(tx) {
-                    tx.executeSql("UPDATE MyContacts SET name=?, nickName=?, mobilePhoneNumber=?, workPhoneNumber=?, emailId=?, website=?, happyBirthDay=? WHERE id=? ", [name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, id],
+                    tx.executeSql("UPDATE MyContacts SET name=?, nickName=?, mobilePhoneNumber=?, workPhoneNumber=?, emailId=?, website=?, happyBirthDay=? , groupId=?, groupName=? WHERE id=? ", [name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupId, groupName, id],
                         queryDB, errorDatabase);
                 });
             }
@@ -221,6 +213,7 @@ $(document).ready(function() {
 
     $(".refresh").bind("click", function(event) {
         db.transaction(queryDB, errorDatabase);
+        $( ":mobile-pagecontainer" ).pagecontainer("change", "#index", {  reload : true, allowSamePageTransition : true, transition : "none" });
     });
 
     /**
@@ -269,10 +262,10 @@ $(document).ready(function() {
         } else if (event.type === 'tap') { //To show contact details view
             if ($("#tapHoldCheck").val() == '') { //Tap will work only if the value of the text box with id 'tapHoldCheck' is blank
                 db.transaction(function(tx) {
-                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay FROM MyContacts WHERE id=?;", [liId], function(tx, results) {
+                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupName FROM MyContacts WHERE id=?;", [liId], function(tx, results) {
                         var row = results.rows.item(0);
-                        $.mobile.showPageLoadingMsg(true);
-                        $.mobile.changePage($("#displayDataPage"), { transition: "slide" });
+                        $.mobile.loading("show");
+                        $("body").pagecontainer("change", "#displayDataPage", { transition: "slide" });
                         $("#nameHeader").html(row['name']);
                         $("#dataName").html(row['name']);
                         $("#dataNickName").html(row['nickName']);
@@ -281,9 +274,10 @@ $(document).ready(function() {
                         $("#dataEmailId").html('<a href="mailto:' + row['emailId'] + '">' + row['emailId'] + '</a>');
                         $("#dataWebsite").html('<a href="' + row['website'] + '" data-role="external">' + row['website'] + '</a>');
                         $("#dataHappyBirthDay").html(row['happyBirthDay']);
+                        $("#dataContactGroup").html(row['groupName']);
                         $('#dataList').trigger('create');
                         $('#dataList').listview('refresh');
-                        $.mobile.hidePageLoadingMsg();
+                        $.mobile.loading("hide");
                     });
                 });
             }
@@ -310,7 +304,7 @@ $(document).ready(function() {
         var id = action_liId[1];
         if (action == 'edit') { //Edit
             db.transaction(function(tx) {
-                tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay  FROM MyContacts WHERE id=?;", [id], function(tx, results) {
+                tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupName  FROM MyContacts WHERE id=?;", [id], function(tx, results) {
                     var row = results.rows.item(0);
                     $("#name").val(row['name']);
                     $("#nickName").val(row['nickName']);
@@ -321,7 +315,7 @@ $(document).ready(function() {
                     $("#happyBirthDay").val(row['happyBirthDay']);
                     $("#id").val(id);
                     $("#addNewPageHeader").html('Edit');
-                    $.mobile.changePage($("#addNewPage"), { transition: "slide", reverse: true });
+                    $("body").pagecontainer("change", "#addNewPage", { transition: "slide", reverse: true });
                 });
             });
         }
@@ -334,9 +328,17 @@ $(document).ready(function() {
             );
         }
         if (action == 'addToGroup') { //Add to Group
-            var groupArray = [];
-            groupArray.push(id);
-            $.mobile.changePage($("#two"), { transition: "slide", reverse: true });
+            $("body").pagecontainer("change", "#addContactGroupPage", { transition: "slide", reverse: true });
+            $("#groupContactData").change(function() {
+                var selectedGroupId = $(this).val();
+                var selectedGroupName = $(this).find(":selected").text();
+                db.transaction(function(tx) {
+                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay FROM MyContacts WHERE id=?;", [id],
+                        function(tx, results) {
+                            queryGroupSuccess(tx, results, selectedGroupId, selectedGroupName, id)
+                        }, errorDatabase);
+                });
+            });
         }
     });
 
@@ -349,15 +351,40 @@ $(document).ready(function() {
             db.transaction(function(tx) { tx.executeSql("DELETE FROM MyContacts WHERE id=?", [id], queryDB, errorDatabase); });
         }
         if (buttonIndex === 2) {
-            $.mobile.changePage($("#index"), { transition: "slide" });
+            $("body").pagecontainer("change", "#index", { transition: "slide" });
         }
     }
 
-    function navItemClick(obj) {
-        alert(obj.class);
+    /**
+     * Group content tap functionality.
+     *
+     */
+    $("#index [data-role='group-content'] ul").on('tap', 'li', function(event) {
+        event.preventDefault(); //Preventing default call of event
+        event.stopImmediatePropagation(); //Keeps the rest of the handlers from being executed and prevents the event from bubbling up the DOM tree.
+        var liId = this.id;
+        if (event.type === 'tap') { //To show contact details view
+            if ($("#tapHoldCheck").val() == '') { //Tap will work only if the value of the text box with id 'tapHoldCheck' is blank
+                db.transaction(function(tx) {
+                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupName FROM MyContacts WHERE groupId=?;", [liId], function(tx, results) {
+                        var len = results.rows.length;
+                        if (len > 0) {
+                            $.mobile.loading("show");
+                            $("body").pagecontainer("change", "#contactGroupListPage", { transition: "slide" });
+                            $("#groupDataList").html('');
+                            for (var i = 0; i < len; i++) {
+                                var row = results.rows.item(i);
+                                var htmlData = '<li id="' + row["id"] + '"><a href="#"><h2>' + row["name"] + '</h2><p class="ui-li-aside">' + row["nickName"] + '</p></a></li>';
+                                $("#groupDataList").append(htmlData);
+                                $("#groupDataList").listview().listview('refresh');
+                            }
+                            $.mobile.loading("hide");
+                        } else {
 
-        $("ul a").removeClass("ui-state-persist");
-        $(obj).addClass("ui-state-persist");
-
-    }
+                        }
+                    });
+                });
+            }
+        }
+    });
 });
