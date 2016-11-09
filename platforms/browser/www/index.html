@@ -20,11 +20,27 @@
     <div data-role="page" id="index">
         <div data-role="header" data-position="fixed">
             <a href="#" class="refresh" data-role="button" data-icon="refresh" data-theme="a" title="Refresh">Refresh</a>
-            <h1>My Contacts</h1>
+            <h1>Phone Book</h1>
             <a href="#" class="addNew" data-role="button" data-icon="add" data-theme="a" title="Add New">Add</a>
         </div>
-        <div data-role="content">
+        <div data-role="tabs" id="tabs">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#one" class="navItemClick ui-btn-active ui-state-persist" data-ajax="false">Contacts</a></li>
+                    <li><a class="navItemClick" href="#two" data-ajax="false">Groups</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="one" data-role="content" class="ui-content">
             <ul data-role="listview" data-filter="true" data-filter-placeholder="Search..." id="userList"> </ul>
+        </div>
+        <div id="two" data-role="content">
+            <!-- <ul data-role="listview" data-filter="true" data-filter-placeholder="Search Group..." id="groupList"> </ul> -->
+            <ul data-role="listview">
+                <li>VIP</li>
+                <li>Friends</li>
+                <li>Family</li>
+            </ul>
         </div>
         <div data-role="popup" id="actionList-popup" data-overlay-theme="a">
             <ul data-role="listview" id="actionList" style="border: 1px solid blue; width:15em"> </ul>
@@ -96,8 +112,10 @@
                 <img style="display:none;width:70px;height:70px;" id="largeImage" src="" />
             </div>
             <input type="hidden" name="id" id="id" value="" />
-            <button class="capturePhoto">Capture Photo</button> <br>
-            <button class="getSavedPhoto">From Photo Album</button><br>
+            <button class="capturePhoto">Capture Photo</button>
+            <br>
+            <button class="getSavedPhoto">From Photo Album</button>
+            <br>
         </div>
     </div>
     <!-- add contact form ends -->

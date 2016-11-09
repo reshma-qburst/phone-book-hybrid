@@ -18,6 +18,7 @@ $(document).ready(function() {
         document.addEventListener('backbutton', onBack, false); //Override the back button functionality
         document.addEventListener('capturePhoto', capturePhoto, false);
         document.addEventListener('getSavedPhoto', getPhoto, false);
+        document.addEventListener('navItemClick', navItemClick, false);
     }
 
     $(".capturePhoto").bind("click", function(event) {
@@ -26,6 +27,10 @@ $(document).ready(function() {
 
     $(".getSavedPhoto").bind("click", function(event) {
         getPhoto(pictureSource.SAVEDPHOTOALBUM);
+    });
+
+    $(".navItemClick").bind("click", function(event) {
+        navItemClick(this);
     });
 
     /**
@@ -105,6 +110,11 @@ $(document).ready(function() {
                             workPhoneNumber INT, emailId TEXT, website TEXT, happyBirthDay TEXT)\
                              ');
         tx.executeSql('SELECT id, name, nickName FROM MyContacts ORDER BY name', [], querySuccess, errorDatabase);
+
+        /*tx.executeSql('CREATE TABLE IF NOT EXISTS MyContactGroups (id INTEGER PRIMARY KEY AUTOINCREMENT, \
+                            name TEXT NOT NULL)\
+                             ');
+        tx.executeSql('SELECT id, name FROM MyContactGroups ORDER BY name', [], queryGroupSuccess, errorDatabase);*/
     }
 
     function successCB() {
@@ -132,6 +142,20 @@ $(document).ready(function() {
             var htmlData = '<li id="' + row["id"] + '"><a href="#"><h2>' + row["name"] + '</h2><p class="ui-li-aside">' + row["nickName"] + '</p></a></li>';
             $("#userList").append(htmlData);
             $("#userList").listview().listview('refresh');
+        }
+        $.mobile.hidePageLoadingMsg();
+        $.mobile.changePage($("#index"));
+    }
+
+    function queryGroupSuccess(tx, results){
+        $.mobile.showPageLoadingMsg(true);
+        var len = results.rows.length;
+        $("#groupList").html(''); 
+        for (var i = 0; i < len; i++) {
+            var row = results.rows.item(i);
+            var htmlData = '<li id="' + row["id"] + '"><a href="#"><h2>' + row["name"] + '</h2></a></li>';
+            $("#groupList").append(htmlData);
+            $("#groupList").listview().listview('refresh');
         }
         $.mobile.hidePageLoadingMsg();
         $.mobile.changePage($("#index"));
@@ -238,6 +262,7 @@ $(document).ready(function() {
             $("#actionList").html('');
             $("#actionList").append('<li id="edit&' + liId + '">Edit</li>').listview('refresh');
             $("#actionList").append('<li id="delete&' + liId + '">Delete</li>').listview('refresh');
+            $("#actionList").append('<li id="addToGroup&' + liId + '">Add to Group</li>').listview('refresh');
             $popup.popup();
             $popup.popup('open');
             $("#tapHoldCheck").val('true');
@@ -308,6 +333,11 @@ $(document).ready(function() {
                 'Ok, Cancel'
             );
         }
+        if (action == 'addToGroup') { //Add to Group
+            var groupArray = [];
+            groupArray.push(id);
+            $.mobile.changePage($("#two"), { transition: "slide", reverse: true });
+        }
     });
 
     /**
@@ -321,5 +351,13 @@ $(document).ready(function() {
         if (buttonIndex === 2) {
             $.mobile.changePage($("#index"), { transition: "slide" });
         }
+    }
+
+    function navItemClick(obj) {
+        alert(obj.class);
+
+        $("ul a").removeClass("ui-state-persist");
+        $(obj).addClass("ui-state-persist");
+
     }
 });
