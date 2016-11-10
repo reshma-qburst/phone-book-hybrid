@@ -23,20 +23,20 @@
         <div data-role="header" data-position="fixed" data-theme="b">
             <a href="#" class="refresh" data-role="button" data-icon="refresh" data-theme="b" title="Refresh">Refresh</a>
             <h1>Phone Book</h1>
-            <a href="#" class="addNew" data-role="button" data-icon="plus" data-theme="b" title="Add New">Add</a>
+            <a href="#" id="add-button" class="addNew" data-role="button" data-icon="plus" data-theme="b" title="Add New">Add</a>
         </div>
         <div data-role="tabs" id="tabs">
             <div data-role="navbar">
                 <ul>
                     <li><a href="#one" class="ui-btn-active ui-state-persist" data-ajax="false">Contacts</a></li>
-                    <li><a href="#two" data-ajax="false">Groups</a></li>
+                    <li><a href="#two" id="group-tab" data-ajax="false">Groups</a></li>
                 </ul>
             </div>
             <div id="one" data-role="content" class="ui-content">
                 <ul data-role="listview" data-filter="true" data-filter-placeholder="Search..." id="userList"> </ul>
             </div>
-            <div id="two" data-role="group-content">
-                <ul data-role="listview" data-filter="true" data-filter-placeholder="Search Group..." id="groupList" data-inset="true">
+            <div id="two" data-role="group-content" class="ui-content">
+                <ul data-role="listview" data-filter="true" data-filter-placeholder="Search Group..." id="groupList">
                     <li id="0"><a href="#">VIP</a></li>
                     <li id="1"><a href="#">Family</a></li>
                     <li id="2"><a href="#">Friends</a></li>
@@ -74,7 +74,7 @@
     <div data-role="page" id="addContactGroupPage">
         <div data-role="header" data-position="fixed" data-theme="b">
             <a href="#" class="back" data-role="button" data-icon="arrow-l" data-theme="b" title="Back">Back</a>
-            <h1 id="nameHeader"></h1>
+            <h1 id="groupNameHeader"></h1>
         </div>
         <div data-role="content">
             <form>

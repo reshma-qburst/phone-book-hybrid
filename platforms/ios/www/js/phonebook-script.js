@@ -137,6 +137,10 @@ $(document).ready(function() {
         $("body").pagecontainer("change", "#index");
     }
 
+    /**
+     * Call back for contact group list.
+     *
+     */
     function queryGroupSuccess(tx, results, groupid, groupname, id) {
         var row = results.rows.item(0);
         tx.executeSql("UPDATE MyContacts SET name=?, nickName=?, mobilePhoneNumber=?, workPhoneNumber=?, emailId=?, website=?, happyBirthDay=?, groupId=?, groupName=? WHERE id=? ", [row['name'], row['nickName'], row['mobilePhoneNumber'], row['workPhoneNumber'], row['emailId'], row['website'], row['happyBirthDay'], groupid, groupname, id],
@@ -213,8 +217,6 @@ $(document).ready(function() {
 
     $(".refresh").bind("click", function(event) {
         db.transaction(queryDB, errorDatabase);
-        $("body").pagecontainer("change", "#index",{reload: true,transition : "none"});
-        /*$( ":mobile-pagecontainer" ).pagecontainer("change", "#index", {  reload : true, allowSamePageTransition : true, transition : "none" });*/
     });
 
     /**
