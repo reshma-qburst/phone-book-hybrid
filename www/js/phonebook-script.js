@@ -180,9 +180,9 @@ $(document).ready(function() {
             groupId = 0;
         } else if (groupName == 'Family') {
             groupId = 1;
-        } else {
+        } else if (groupName == 'Friends') {
             groupId = 2;
-        }
+        } else {}
 
         if (name == '') {
             $("#addNewPage .error").html('Please enter name.').show();
@@ -213,7 +213,8 @@ $(document).ready(function() {
 
     $(".refresh").bind("click", function(event) {
         db.transaction(queryDB, errorDatabase);
-        $( ":mobile-pagecontainer" ).pagecontainer("change", "#index", {  reload : true, allowSamePageTransition : true, transition : "none" });
+        $("body").pagecontainer("change", "#index",{reload: true,transition : "none"});
+        /*$( ":mobile-pagecontainer" ).pagecontainer("change", "#index", {  reload : true, allowSamePageTransition : true, transition : "none" });*/
     });
 
     /**
