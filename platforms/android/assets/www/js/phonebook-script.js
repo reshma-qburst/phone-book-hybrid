@@ -362,14 +362,14 @@ $(document).ready(function() {
      * Group content tap functionality.
      *
      */
-    $("#index [data-role='group-content'] ul").on('tap', 'li', function(event) {
+    $("#index [data-role='group-content'] ul").on('tap taphold', 'li', function(event) {
         event.preventDefault(); //Preventing default call of event
         event.stopImmediatePropagation(); //Keeps the rest of the handlers from being executed and prevents the event from bubbling up the DOM tree.
         var liId = this.id;
         if (event.type === 'tap') { //To show contact details view
             if ($("#tapHoldCheck").val() == '') { //Tap will work only if the value of the text box with id 'tapHoldCheck' is blank
                 db.transaction(function(tx) {
-                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupName FROM MyContacts WHERE groupId=?;", [liId], function(tx, results) {
+                    tx.executeSql("SELECT id, name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupName FROM MyContacts WHERE groupId=?;", [liId], function(tx, results) {
                         var len = results.rows.length;
                         if (len > 0) {
                             $.mobile.loading("show");
@@ -388,6 +388,50 @@ $(document).ready(function() {
                     });
                 });
             }
+        } else if (event.type === 'taphold') { //To show edit/delete options popup
+            navigator.notification.vibrate(30); //Vibrates the device for the specified amount of time
+            var $popup = $('#actionList-popup');
+            $("#actionList").html('');
+            $("#actionList").append('<li id="edit&' + liId + '">Edit</li>').listview('refresh');
+            $("#actionList").append('<li id="delete&' + liId + '">Delete</li>').listview('refresh');
+            $popup.popup();
+            $popup.popup('open');
+            $("#tapHoldCheck").val('true');
         }
     });
+    /**
+     * Group content tap functionality.
+     *
+     */
+    $("#contactGroupListPage [data-role='content'] ul").on('tap', 'li', function(event) {
+        event.preventDefault(); //Preventing default call of event
+        event.stopImmediatePropagation(); //Keeps the rest of the handlers from being executed and prevents the event from bubbling up the DOM tree.
+        var liId = this.id;
+        if (event.type === 'tap') { //To show contact details view
+            if ($("#tapHoldCheck").val() == '') { //Tap will work only if the value of the text box with id 'tapHoldCheck' is blank
+                db.transaction(function(tx) {
+                    tx.executeSql("SELECT name, nickName, mobilePhoneNumber, workPhoneNumber, emailId, website, happyBirthDay, groupName FROM MyContacts WHERE id=?;", [liId], function(tx, results) {
+                        var row = results.rows.item(0);
+                        $.mobile.loading("show");
+                        $("body").pagecontainer("change", "#displayDataPage", { transition: "slide" });
+                        $("#nameHeader").html(row['name']);
+                        $("#dataName").html(row['name']);
+                        $("#dataNickName").html(row['nickName']);
+                        $("#dataMobilePhoneNumber").html(row['mobilePhoneNumber']);
+                        $("#dataWorkPhoneNumber").html(row['workPhoneNumber']);
+                        $("#dataEmailId").html('<a href="mailto:' + row['emailId'] + '">' + row['emailId'] + '</a>');
+                        $("#dataWebsite").html('<a href="' + row['website'] + '" data-role="external">' + row['website'] + '</a>');
+                        $("#dataHappyBirthDay").html(row['happyBirthDay']);
+                        $("#dataContactGroup").html(row['groupName']);
+                        $('#dataList').trigger('create');
+                        $('#dataList').listview('refresh');
+                        $.mobile.loading("hide");
+                    });
+                });
+            }
+        }
+    });
+
+
+
 });
