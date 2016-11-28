@@ -388,15 +388,6 @@ $(document).ready(function() {
                     });
                 });
             }
-        } else if (event.type === 'taphold') { //To show edit/delete options popup
-            navigator.notification.vibrate(30); //Vibrates the device for the specified amount of time
-            var $popup = $('#actionList-popup');
-            $("#actionList").html('');
-            $("#actionList").append('<li id="edit&' + liId + '">Edit</li>').listview('refresh');
-            $("#actionList").append('<li id="delete&' + liId + '">Delete</li>').listview('refresh');
-            $popup.popup();
-            $popup.popup('open');
-            $("#tapHoldCheck").val('true');
         }
     });
     /**

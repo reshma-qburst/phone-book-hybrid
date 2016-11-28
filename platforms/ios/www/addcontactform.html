@@ -1,0 +1,51 @@
+<!-- add contact form starts -->
+    <div data-role="page" id="addNewPage">
+        <div data-role="header" data-position="fixed" data-theme="b">
+            <a href="#" class="back" data-role="button" data-icon="arrow-l" data-theme="b" title="Back">Back</a>
+            <h1 id="addNewPageHeader"></h1>
+            <a href="#" id="save" data-role="button" data-icon="check" data-theme="b" title="Save">Save</a>
+        </div>
+        <div data-role="content">
+            <div class='error'></div>
+            <div data-role="fieldcontain">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" required="true" maxlength="100" value="" />
+            </div>
+            <div data-role="fieldcontain">
+                <label for="nickName">Nick Name</label>
+                <input type="text" name="nickName" id="nickName" maxlength="100" value="" />
+            </div>
+            <div data-role="fieldcontain">
+                <label for="mobilePhoneNumber">Mobile Number</label>
+                <input type="tel" name="mobilePhoneNumber" id="mobilePhoneNumber" maxlength="15" value="" />
+            </div>
+            <div data-role="fieldcontain">
+                <label for="workPhoneNumber">Work Phone Number</label>
+                <input type="tel" name="workPhoneNumber" id="workPhoneNumber" maxlength="15" value="" />
+            </div>
+            <div data-role="fieldcontain">
+                <label for="emailId">Email Id</label>
+                <input type="email" name="emailId" id="emailId" maxlength="100" value="" />
+            </div>
+            <div data-role="fieldcontain">
+                <label for="website">Website</label>
+                <input type="url" name="website" id="website" maxlength="100" value="" />
+            </div>
+            <div data-role="fieldcontain">
+                <label for="happyBirthDay">Happy Birth Day</label>
+                <input type="date" name="happyBirthDay" id="happyBirthDay" value="" />
+            </div>
+            <div data-role="fieldcontain">
+                <img style="display:none;width:70px;height:70px;" id="smallImage" src="" />
+            </div>
+            <div data-role="fieldcontain">
+                <img style="display:none;width:70px;height:70px;" id="largeImage" src="" />
+            </div>
+            <input type="hidden" name="id" id="id" value="" />
+            <button class="capturePhoto">Capture Photo</button>
+            <br>
+            <button class="getSavedPhoto">From Photo Album</button>
+            <br>
+        </div>
+    </div>
+    <!-- add contact form ends -->
