@@ -29,23 +29,23 @@ $(document).ready(function() {
     });
 
     /**
-     * Called when a photo is successfully retrieved
+     * Success call back :: Called when a photo is successfully retrieved
      *
      */
     function onPhotoDataSuccess(imageData) {
         var smallImage = document.getElementById('smallImage');
         smallImage.style.display = 'block';
-        smallImage.src = "data:image/jpeg;base64," + imageData;
+        smallImage.src = "data:image/jpeg;base64," + imageData; //Base64-encoded String
     }
 
     /**
-     * Called when a photo is successfully retrieved
+     * Success call back :: Called when a photo is successfully retrieved
      *
      */
     function onPhotoURISuccess(imageURI) {
         var largeImage = document.getElementById('largeImage');
         largeImage.style.display = 'block';
-        largeImage.src = imageURI;
+        largeImage.src = imageURI; //URI for the image file
     }
 
     /**
@@ -431,7 +431,4 @@ $(document).ready(function() {
             }
         }
     });
-
-
-
 });
